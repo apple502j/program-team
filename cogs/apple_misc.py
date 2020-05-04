@@ -1,4 +1,5 @@
 import json
+import subprocess
 import discord
 from discord.ext import commands
 
@@ -13,9 +14,15 @@ CODE = [
     ("block_end",)
 ]
 
+VERSION = subprocess.check_output(
+    git rev-parse --short HEAD",
+    shell=True
+).decode('ascii').strip()
+
 class AppleMiscCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.bot.sina_version = VERSION
 
     @commands.command()
     async def code_in(self, ctx, lang):
@@ -39,6 +46,10 @@ class AppleMiscCog(commands.Cog):
                 indents = lang_def["indent"] * indent_times
                 result += f"{indents}{addition}{suffix}"
             await ctx.send(f"```{result}```")
+
+    @commands.command()
+    async def sina_version(self, ctx):
+        await ctx.send(VERSION)
 
 def setup(bot):
     bot.add_cog(AppleMiscCog(bot))
